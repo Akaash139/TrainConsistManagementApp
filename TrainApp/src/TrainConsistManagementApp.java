@@ -5,46 +5,67 @@ import java.util.*;
  * MAIN CLASS - BookMyTrain
  * ============================================================
  *
- * Use Case 9: Error Handling & Validation
+ * Use Case 10: Cancellation & Rollback (Stack)
  *
- * @version 9.0
+ * @version 10.0
  */
 
 public class TrainConsistManagementApp {
 
-    // ============ Custom Exception ============
-    static class InvalidBogieException extends Exception {
-        public InvalidBogieException(String message) {
-            super(message);
-        }
-    }
+    // ============ Allocation System ============
+    static class TrainService {
 
-    // ============ Bogie Class ============
-    static class Bogie {
-        String id;
-        String type;
-        int capacity;
+        // Inventory (bogie type -> count)
+        Map<String, Integer> inventory = new HashMap<>();
 
-        public Bogie(String id, String type, int capacity) throws InvalidBogieException {
+        // Allocated bogies
+        Set<String> allocated = new HashSet<>();
 
-            // Validation
-            if (id == null || id.isEmpty()) {
-                throw new InvalidBogieException("Bogie ID cannot be empty");
-            }
+        // Rollback stack (LIFO)
+        Stack<String> rollbackStack = new Stack<>();
 
-            if (capacity <= 0) {
-                throw new InvalidBogieException("Capacity must be greater than 0");
-            }
-
-            this.id = id;
-            this.type = type;
-            this.capacity = capacity;
+        public TrainService() {
+            inventory.put("Sleeper", 2);
+            inventory.put("AC", 1);
         }
 
-        public void display() {
-            System.out.println("ID: " + id +
-                    " | Type: " + type +
-                    " | Capacity: " + capacity);
+        // Allocate bogie
+        public void allocate(String id, String type) {
+            if (!inventory.containsKey(type) || inventory.get(type) <= 0) {
+                System.out.println("Allocation failed for " + id);
+                return;
+            }
+
+            inventory.put(type, inventory.get(type) - 1);
+            allocated.add(id);
+
+            System.out.println("Allocated " + id + " (" + type + ")");
+        }
+
+        // Cancel (Rollback)
+        public void cancel(String id, String type) {
+
+            if (!allocated.contains(id)) {
+                System.out.println("Invalid cancellation for " + id);
+                return;
+            }
+
+            // Push to stack
+            rollbackStack.push(id);
+
+            // Remove allocation
+            allocated.remove(id);
+
+            // Restore inventory
+            inventory.put(type, inventory.get(type) + 1);
+
+            System.out.println("Cancelled " + id + " -> rolled back");
+        }
+
+        public void showStatus() {
+            System.out.println("\nInventory: " + inventory);
+            System.out.println("Allocated: " + allocated);
+            System.out.println("Rollback Stack: " + rollbackStack);
         }
     }
 
@@ -52,28 +73,24 @@ public class TrainConsistManagementApp {
     public static void main(String[] args) {
 
         System.out.println("=======================================");
-        System.out.println(" UC9 - Error Handling & Validation ");
+        System.out.println(" UC10 - Cancellation & Rollback ");
         System.out.println("=======================================\n");
 
-        List<Bogie> train = new ArrayList<>();
+        TrainService ts = new TrainService();
 
-        try {
-            // Valid bogie
-            train.add(new Bogie("BG101", "Sleeper", 72));
+        // Allocate
+        ts.allocate("BG101", "Sleeper");
+        ts.allocate("BG102", "AC");
 
-            // Invalid bogie (capacity <= 0)
-            train.add(new Bogie("BG102", "AC Chair", -10));
+        // Cancel latest
+        ts.cancel("BG102", "AC");
 
-        } catch (InvalidBogieException e) {
-            System.out.println("Error: " + e.getMessage());
-        }
+        // Invalid cancel
+        ts.cancel("BG999", "Sleeper");
 
-        // Program continues safely
-        System.out.println("\nValid Train Consist:");
-        for (Bogie b : train) {
-            b.display();
-        }
+        // Show final state
+        ts.showStatus();
 
-        System.out.println("\nUC9 operations completed successfully...");
+        System.out.println("\nUC10 completed...");
     }
 }
