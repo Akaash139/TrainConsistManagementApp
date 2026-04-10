@@ -1,58 +1,57 @@
 import java.util.*;
-import java.util.regex.*;
-
-/**
- * ============================================================
- * MAIN CLASS - BookMyTrain
- * ============================================================
- *
- * Use Case 11: Regex Validation
- *
- * @version 11.0
- */
+import java.util.stream.*;
 
 public class TrainConsistManagementAppTest {
 
+    static class GoodsBogie {
+        String type;
+        String cargo;
+
+        public GoodsBogie(String type, String cargo) {
+            this.type = type;
+            this.cargo = cargo;
+        }
+    }
+
+    // Method to test
+    static boolean isTrainSafe(List<GoodsBogie> bogies) {
+        return bogies.stream()
+                .allMatch(b ->
+                        !b.type.equals("Cylindrical") ||
+                                b.cargo.equals("Petroleum")
+                );
+    }
+
     public static void main(String[] args) {
 
-        System.out.println("=======================================");
-        System.out.println(" UC11 - Regex Validation ");
-        System.out.println("=======================================\n");
+        // ✅ Test 1: All valid
+        List<GoodsBogie> t1 = Arrays.asList(
+                new GoodsBogie("Cylindrical", "Petroleum"),
+                new GoodsBogie("Open", "Coal")
+        );
+        System.out.println("Test1: " + isTrainSafe(t1)); // true
 
-        Scanner sc = new Scanner(System.in);
+        // ❌ Test 2: Invalid cylindrical
+        List<GoodsBogie> t2 = Arrays.asList(
+                new GoodsBogie("Cylindrical", "Coal")
+        );
+        System.out.println("Test2: " + isTrainSafe(t2)); // false
 
-        // Input
-        System.out.print("Enter Train ID: ");
-        String trainId = sc.nextLine();
+        // ✅ Test 3: Non-cylindrical allowed
+        List<GoodsBogie> t3 = Arrays.asList(
+                new GoodsBogie("Box", "Grain")
+        );
+        System.out.println("Test3: " + isTrainSafe(t3)); // true
 
-        System.out.print("Enter Cargo Code: ");
-        String cargoCode = sc.nextLine();
+        // ❌ Test 4: Mixed violation
+        List<GoodsBogie> t4 = Arrays.asList(
+                new GoodsBogie("Cylindrical", "Petroleum"),
+                new GoodsBogie("Cylindrical", "Coal")
+        );
+        System.out.println("Test4: " + isTrainSafe(t4)); // false
 
-        // Regex patterns
-        String trainPattern = "TRN-\\d{4}";
-        String cargoPattern = "PET-[A-Z]{2}";
-
-        // Compile patterns
-        Pattern p1 = Pattern.compile(trainPattern);
-        Pattern p2 = Pattern.compile(cargoPattern);
-
-        // Match input
-        Matcher m1 = p1.matcher(trainId);
-        Matcher m2 = p2.matcher(cargoCode);
-
-        // Validate
-        if (m1.matches()) {
-            System.out.println("Valid Train ID");
-        } else {
-            System.out.println("Invalid Train ID");
-        }
-
-        if (m2.matches()) {
-            System.out.println("Valid Cargo Code");
-        } else {
-            System.out.println("Invalid Cargo Code");
-        }
-
-        System.out.println("\nUC11 completed...");
+        // ✅ Test 5: Empty list
+        List<GoodsBogie> t5 = new ArrayList<>();
+        System.out.println("Test5: " + isTrainSafe(t5)); // true
     }
 }

@@ -1,58 +1,55 @@
 import java.util.*;
-import java.util.regex.*;
+import java.util.stream.*;
 
 /**
  * ============================================================
- * MAIN CLASS - BookMyTrain
+ * UC12: Safety Compliance Check
  * ============================================================
- *
- * Use Case 11: Regex Validation
- *
- * @version 11.0
  */
 
 public class TrainConsistManagementApp {
 
+    // ============ Goods Bogie ============
+    static class GoodsBogie {
+        String type;
+        String cargo;
+
+        public GoodsBogie(String type, String cargo) {
+            this.type = type;
+            this.cargo = cargo;
+        }
+
+        public void display() {
+            System.out.println(type + " -> " + cargo);
+        }
+    }
+
     public static void main(String[] args) {
 
         System.out.println("=======================================");
-        System.out.println(" UC11 - Regex Validation ");
+        System.out.println(" UC12 - Safety Compliance ");
         System.out.println("=======================================\n");
 
-        Scanner sc = new Scanner(System.in);
+        List<GoodsBogie> bogies = new ArrayList<>();
 
-        // Input
-        System.out.print("Enter Train ID: ");
-        String trainId = sc.nextLine();
+        bogies.add(new GoodsBogie("Cylindrical", "Petroleum"));
+        bogies.add(new GoodsBogie("Open", "Coal"));
+        bogies.add(new GoodsBogie("Box", "Grain"));
 
-        System.out.print("Enter Cargo Code: ");
-        String cargoCode = sc.nextLine();
+        // 🔥 allMatch validation
+        boolean isSafe = bogies.stream()
+                .allMatch(b ->
+                        !b.type.equals("Cylindrical") ||
+                                b.cargo.equals("Petroleum")
+                );
 
-        // Regex patterns
-        String trainPattern = "TRN-\\d{4}";
-        String cargoPattern = "PET-[A-Z]{2}";
+        // Display
+        System.out.println("Bogie Details:");
+        bogies.forEach(b -> b.display());
 
-        // Compile patterns
-        Pattern p1 = Pattern.compile(trainPattern);
-        Pattern p2 = Pattern.compile(cargoPattern);
+        System.out.println("\nTrain Safety Status: " +
+                (isSafe ? "SAFE" : "UNSAFE"));
 
-        // Match input
-        Matcher m1 = p1.matcher(trainId);
-        Matcher m2 = p2.matcher(cargoCode);
-
-        // Validate
-        if (m1.matches()) {
-            System.out.println("Valid Train ID");
-        } else {
-            System.out.println("Invalid Train ID");
-        }
-
-        if (m2.matches()) {
-            System.out.println("Valid Cargo Code");
-        } else {
-            System.out.println("Invalid Cargo Code");
-        }
-
-        System.out.println("\nUC11 completed...");
+        System.out.println("\nUC12 completed...");
     }
 }
