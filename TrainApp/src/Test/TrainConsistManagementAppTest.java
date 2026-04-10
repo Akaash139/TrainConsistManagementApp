@@ -1,51 +1,58 @@
 import java.util.*;
-import java.util.stream.*;
+import java.util.regex.*;
 
 /**
  * ============================================================
  * MAIN CLASS - BookMyTrain
  * ============================================================
  *
- * Use Case 10: Total Seat Calculation using reduce()
+ * Use Case 11: Regex Validation
  *
- * @version 10.0
+ * @version 11.0
  */
 
 public class TrainConsistManagementAppTest {
 
-    // ============ Bogie Class ============
-    static class Bogie {
-        String type;
-        int capacity;
-
-        public Bogie(String type, int capacity) {
-            this.type = type;
-            this.capacity = capacity;
-        }
-    }
-
-    // ============ MAIN ============
     public static void main(String[] args) {
 
         System.out.println("=======================================");
-        System.out.println(" UC10 - Total Seat Calculation ");
+        System.out.println(" UC11 - Regex Validation ");
         System.out.println("=======================================\n");
 
-        // Reuse list
-        List<Bogie> bogies = new ArrayList<>();
+        Scanner sc = new Scanner(System.in);
 
-        bogies.add(new Bogie("Sleeper", 72));
-        bogies.add(new Bogie("AC Chair", 54));
-        bogies.add(new Bogie("First Class", 40));
-        bogies.add(new Bogie("Cargo", 100));
+        // Input
+        System.out.print("Enter Train ID: ");
+        String trainId = sc.nextLine();
 
-        // 🔥 map + reduce
-        int totalSeats = bogies.stream()
-                .map(b -> b.capacity)          // extract capacity
-                .reduce(0, Integer::sum);      // sum all
+        System.out.print("Enter Cargo Code: ");
+        String cargoCode = sc.nextLine();
 
-        System.out.println("Total Seating Capacity: " + totalSeats);
+        // Regex patterns
+        String trainPattern = "TRN-\\d{4}";
+        String cargoPattern = "PET-[A-Z]{2}";
 
-        System.out.println("\nUC10 completed...");
+        // Compile patterns
+        Pattern p1 = Pattern.compile(trainPattern);
+        Pattern p2 = Pattern.compile(cargoPattern);
+
+        // Match input
+        Matcher m1 = p1.matcher(trainId);
+        Matcher m2 = p2.matcher(cargoCode);
+
+        // Validate
+        if (m1.matches()) {
+            System.out.println("Valid Train ID");
+        } else {
+            System.out.println("Invalid Train ID");
+        }
+
+        if (m2.matches()) {
+            System.out.println("Valid Cargo Code");
+        } else {
+            System.out.println("Invalid Cargo Code");
+        }
+
+        System.out.println("\nUC11 completed...");
     }
 }
