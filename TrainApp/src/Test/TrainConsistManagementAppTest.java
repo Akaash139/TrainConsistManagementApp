@@ -5,12 +5,19 @@ import java.util.*;
  * MAIN CLASS - BookMyTrain
  * ============================================================
  *
- * Use Case 8: Train Consist History & Reporting
+ * Use Case 9: Error Handling & Validation
  *
- * @version 8.0
+ * @version 9.0
  */
 
-public class TrainConsistManagementAppTest{
+public class TrainConsistManagementAppTest {
+
+    // ============ Custom Exception ============
+    static class InvalidBogieException extends Exception {
+        public InvalidBogieException(String message) {
+            super(message);
+        }
+    }
 
     // ============ Bogie Class ============
     static class Bogie {
@@ -18,7 +25,17 @@ public class TrainConsistManagementAppTest{
         String type;
         int capacity;
 
-        public Bogie(String id, String type, int capacity) {
+        public Bogie(String id, String type, int capacity) throws InvalidBogieException {
+
+            // Validation
+            if (id == null || id.isEmpty()) {
+                throw new InvalidBogieException("Bogie ID cannot be empty");
+            }
+
+            if (capacity <= 0) {
+                throw new InvalidBogieException("Capacity must be greater than 0");
+            }
+
             this.id = id;
             this.type = type;
             this.capacity = capacity;
@@ -31,58 +48,32 @@ public class TrainConsistManagementAppTest{
         }
     }
 
-    // ============ History ============
-    static class TrainHistory {
-        List<Bogie> history = new ArrayList<>();
-
-        void addBogie(Bogie b) {
-            history.add(b);
-        }
-
-        void showHistory() {
-            System.out.println("\nTrain Consist History:");
-            for (Bogie b : history) {
-                b.display();
-            }
-        }
-    }
-
-    // ============ Report ============
-    static class ReportService {
-
-        static void generateReport(List<Bogie> history) {
-            int totalCapacity = 0;
-
-            for (Bogie b : history) {
-                totalCapacity += b.capacity;
-            }
-
-            System.out.println("\n--- Train Report ---");
-            System.out.println("Total Bogies: " + history.size());
-            System.out.println("Total Capacity: " + totalCapacity);
-        }
-    }
-
     // ============ MAIN ============
     public static void main(String[] args) {
 
         System.out.println("=======================================");
-        System.out.println(" UC8 - Train History & Reporting ");
+        System.out.println(" UC9 - Error Handling & Validation ");
         System.out.println("=======================================\n");
 
-        TrainHistory th = new TrainHistory();
+        List<Bogie> train = new ArrayList<>();
 
-        // Add bogies (confirmed consist)
-        th.addBogie(new Bogie("BG101", "Sleeper", 72));
-        th.addBogie(new Bogie("BG102", "AC Chair", 54));
-        th.addBogie(new Bogie("BG103", "Cargo", 100));
+        try {
+            // Valid bogie
+            train.add(new Bogie("BG101", "Sleeper", 72));
 
-        // Show history
-        th.showHistory();
+            // Invalid bogie (capacity <= 0)
+            train.add(new Bogie("BG102", "AC Chair", -10));
 
-        // Generate report
-        ReportService.generateReport(th.history);
+        } catch (InvalidBogieException e) {
+            System.out.println("Error: " + e.getMessage());
+        }
 
-        System.out.println("\nUC8 operations completed successfully...");
+        // Program continues safely
+        System.out.println("\nValid Train Consist:");
+        for (Bogie b : train) {
+            b.display();
+        }
+
+        System.out.println("\nUC9 operations completed successfully...");
     }
 }
