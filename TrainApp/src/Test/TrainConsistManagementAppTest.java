@@ -1,65 +1,77 @@
 import java.util.*;
-import java.util.stream.*;
 
 public class TrainConsistManagementAppTest {
+
+    static class InvalidCapacityException extends Exception {
+        public InvalidCapacityException(String msg) {
+            super(msg);
+        }
+    }
 
     static class Bogie {
         String type;
         int capacity;
 
-        public Bogie(String type, int capacity) {
+        public Bogie(String type, int capacity) throws InvalidCapacityException {
+            if (capacity <= 0) {
+                throw new InvalidCapacityException("Capacity must be greater than zero");
+            }
             this.type = type;
             this.capacity = capacity;
         }
     }
 
-    // Loop filtering
-    static List<Bogie> loopFilter(List<Bogie> bogies) {
-        List<Bogie> result = new ArrayList<>();
-        for (Bogie b : bogies) {
-            if (b.capacity > 60) {
-                result.add(b);
-            }
-        }
-        return result;
-    }
-
-    // Stream filtering
-    static List<Bogie> streamFilter(List<Bogie> bogies) {
-        return bogies.stream()
-                .filter(b -> b.capacity > 60)
-                .collect(Collectors.toList());
-    }
-
     public static void main(String[] args) {
 
-        List<Bogie> bogies = Arrays.asList(
-                new Bogie("Sleeper", 72),
-                new Bogie("AC", 54),
-                new Bogie("Cargo", 100)
-        );
-
-        // ✅ Test 1: Loop logic
-        System.out.println("Loop Filter Size: " + loopFilter(bogies).size()); // 2
-
-        // ✅ Test 2: Stream logic
-        System.out.println("Stream Filter Size: " + streamFilter(bogies).size()); // 2
-
-        // ✅ Test 3: Same results
-        System.out.println("Match: " +
-                (loopFilter(bogies).size() == streamFilter(bogies).size()));
-
-        // ✅ Test 4: Time measurement
-        long start = System.nanoTime();
-        loopFilter(bogies);
-        long end = System.nanoTime();
-        System.out.println("Time > 0: " + ((end - start) > 0));
-
-        // ✅ Test 5: Large dataset
-        List<Bogie> big = new ArrayList<>();
-        for (int i = 0; i < 10000; i++) {
-            big.add(new Bogie("T", i));
+        // ✅ Test 1: Valid capacity
+        try {
+            Bogie b = new Bogie("Sleeper", 72);
+            System.out.println("Valid Creation: PASS");
+        } catch (Exception e) {
+            System.out.println("Valid Creation: FAIL");
         }
-        System.out.println("Large Data OK: " + (streamFilter(big).size() >= 0));
+
+        // ✅ Test 2: Negative capacity
+        try {
+            new Bogie("AC", -10);
+            System.out.println("Negative Test: FAIL");
+        } catch (InvalidCapacityException e) {
+            System.out.println("Negative Test: PASS");
+        }
+
+        // ✅ Test 3: Zero capacity
+        try {
+            new Bogie("First Class", 0);
+            System.out.println("Zero Test: FAIL");
+        } catch (InvalidCapacityException e) {
+            System.out.println("Zero Test: PASS");
+        }
+
+        // ✅ Test 4: Exception message
+        try {
+            new Bogie("Test", 0);
+        } catch (InvalidCapacityException e) {
+            System.out.println("Message Check: " +
+                    e.getMessage().equals("Capacity must be greater than zero"));
+        }
+
+        // ✅ Test 5: Object integrity
+        try {
+            Bogie b = new Bogie("Sleeper", 72);
+            System.out.println("Integrity Check: " +
+                    (b.type.equals("Sleeper") && b.capacity == 72));
+        } catch (Exception e) {
+            System.out.println("Integrity Check: FAIL");
+        }
+
+        // ✅ Test 6: Multiple valid bogies
+        try {
+            List<Bogie> list = new ArrayList<>();
+            list.add(new Bogie("S1", 50));
+            list.add(new Bogie("S2", 60));
+            System.out.println("Multiple Creation: PASS");
+        } catch (Exception e) {
+            System.out.println("Multiple Creation: FAIL");
+        }
     }
 }
