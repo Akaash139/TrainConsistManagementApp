@@ -6,9 +6,9 @@ import java.util.stream.*;
  * MAIN CLASS - BookMyTrain
  * ============================================================
  *
- * Use Case 9: Group Bogies by Type
+ * Use Case 10: Total Seat Calculation using reduce()
  *
- * @version 9.0
+ * @version 10.0
  */
 
 public class TrainConsistManagementAppTest {
@@ -22,17 +22,13 @@ public class TrainConsistManagementAppTest {
             this.type = type;
             this.capacity = capacity;
         }
-
-        public void display() {
-            System.out.println(type + " -> " + capacity);
-        }
     }
 
     // ============ MAIN ============
     public static void main(String[] args) {
 
         System.out.println("=======================================");
-        System.out.println(" UC9 - Grouping Bogies ");
+        System.out.println(" UC10 - Total Seat Calculation ");
         System.out.println("=======================================\n");
 
         // Reuse list
@@ -40,25 +36,16 @@ public class TrainConsistManagementAppTest {
 
         bogies.add(new Bogie("Sleeper", 72));
         bogies.add(new Bogie("AC Chair", 54));
-        bogies.add(new Bogie("Sleeper", 72));
         bogies.add(new Bogie("First Class", 40));
-        bogies.add(new Bogie("AC Chair", 54));
+        bogies.add(new Bogie("Cargo", 100));
 
-        // 🔥 groupingBy
-        Map<String, List<Bogie>> grouped =
-                bogies.stream()
-                        .collect(Collectors.groupingBy(b -> b.type));
+        // 🔥 map + reduce
+        int totalSeats = bogies.stream()
+                .map(b -> b.capacity)          // extract capacity
+                .reduce(0, Integer::sum);      // sum all
 
-        // Display grouped result
-        System.out.println("Grouped Bogies:");
-        for (String key : grouped.keySet()) {
-            System.out.println("\nType: " + key);
+        System.out.println("Total Seating Capacity: " + totalSeats);
 
-            for (Bogie b : grouped.get(key)) {
-                b.display();
-            }
-        }
-
-        System.out.println("\nUC9 completed...");
+        System.out.println("\nUC10 completed...");
     }
 }
