@@ -3,55 +3,63 @@ import java.util.stream.*;
 
 public class TrainConsistManagementAppTest {
 
-    static class GoodsBogie {
+    static class Bogie {
         String type;
-        String cargo;
+        int capacity;
 
-        public GoodsBogie(String type, String cargo) {
+        public Bogie(String type, int capacity) {
             this.type = type;
-            this.cargo = cargo;
+            this.capacity = capacity;
         }
     }
 
-    // Method to test
-    static boolean isTrainSafe(List<GoodsBogie> bogies) {
+    // Loop filtering
+    static List<Bogie> loopFilter(List<Bogie> bogies) {
+        List<Bogie> result = new ArrayList<>();
+        for (Bogie b : bogies) {
+            if (b.capacity > 60) {
+                result.add(b);
+            }
+        }
+        return result;
+    }
+
+    // Stream filtering
+    static List<Bogie> streamFilter(List<Bogie> bogies) {
         return bogies.stream()
-                .allMatch(b ->
-                        !b.type.equals("Cylindrical") ||
-                                b.cargo.equals("Petroleum")
-                );
+                .filter(b -> b.capacity > 60)
+                .collect(Collectors.toList());
     }
 
     public static void main(String[] args) {
 
-        // ✅ Test 1: All valid
-        List<GoodsBogie> t1 = Arrays.asList(
-                new GoodsBogie("Cylindrical", "Petroleum"),
-                new GoodsBogie("Open", "Coal")
+        List<Bogie> bogies = Arrays.asList(
+                new Bogie("Sleeper", 72),
+                new Bogie("AC", 54),
+                new Bogie("Cargo", 100)
         );
-        System.out.println("Test1: " + isTrainSafe(t1)); // true
 
-        // ❌ Test 2: Invalid cylindrical
-        List<GoodsBogie> t2 = Arrays.asList(
-                new GoodsBogie("Cylindrical", "Coal")
-        );
-        System.out.println("Test2: " + isTrainSafe(t2)); // false
+        // ✅ Test 1: Loop logic
+        System.out.println("Loop Filter Size: " + loopFilter(bogies).size()); // 2
 
-        // ✅ Test 3: Non-cylindrical allowed
-        List<GoodsBogie> t3 = Arrays.asList(
-                new GoodsBogie("Box", "Grain")
-        );
-        System.out.println("Test3: " + isTrainSafe(t3)); // true
+        // ✅ Test 2: Stream logic
+        System.out.println("Stream Filter Size: " + streamFilter(bogies).size()); // 2
 
-        // ❌ Test 4: Mixed violation
-        List<GoodsBogie> t4 = Arrays.asList(
-                new GoodsBogie("Cylindrical", "Petroleum"),
-                new GoodsBogie("Cylindrical", "Coal")
-        );
-        System.out.println("Test4: " + isTrainSafe(t4)); // false
+        // ✅ Test 3: Same results
+        System.out.println("Match: " +
+                (loopFilter(bogies).size() == streamFilter(bogies).size()));
 
-        // ✅ Test 5: Empty list
-        List<GoodsBogie> t5 = new ArrayList<>();
-        System.out.println("Test5: " + isTrainSafe(t5)); // true
+        // ✅ Test 4: Time measurement
+        long start = System.nanoTime();
+        loopFilter(bogies);
+        long end = System.nanoTime();
+        System.out.println("Time > 0: " + ((end - start) > 0));
+
+        // ✅ Test 5: Large dataset
+        List<Bogie> big = new ArrayList<>();
+        for (int i = 0; i < 10000; i++) {
+            big.add(new Bogie("T", i));
+        }
+        System.out.println("Large Data OK: " + (streamFilter(big).size() >= 0));
     }
 }
