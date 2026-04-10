@@ -10,7 +10,7 @@ import java.util.*;
  * @version 8.0
  */
 
-public class TrainConsistManagementApp{
+public class TrainConsistManagementAppTest{
 
     // ============ Bogie Class ============
     static class Bogie {
