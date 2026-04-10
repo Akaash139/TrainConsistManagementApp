@@ -1,71 +1,30 @@
 import java.util.*;
+import java.util.stream.*;
 
 /**
  * ============================================================
  * MAIN CLASS - BookMyTrain
  * ============================================================
  *
- * Use Case 10: Cancellation & Rollback (Stack)
+ * Use Case 8: Stream API Filtering
  *
- * @version 10.0
+ * @version 8.0
  */
 
 public class TrainConsistManagementApp {
 
-    // ============ Allocation System ============
-    static class TrainService {
+    // ============ Bogie Class ============
+    static class Bogie {
+        String name;
+        int capacity;
 
-        // Inventory (bogie type -> count)
-        Map<String, Integer> inventory = new HashMap<>();
-
-        // Allocated bogies
-        Set<String> allocated = new HashSet<>();
-
-        // Rollback stack (LIFO)
-        Stack<String> rollbackStack = new Stack<>();
-
-        public TrainService() {
-            inventory.put("Sleeper", 2);
-            inventory.put("AC", 1);
+        public Bogie(String name, int capacity) {
+            this.name = name;
+            this.capacity = capacity;
         }
 
-        // Allocate bogie
-        public void allocate(String id, String type) {
-            if (!inventory.containsKey(type) || inventory.get(type) <= 0) {
-                System.out.println("Allocation failed for " + id);
-                return;
-            }
-
-            inventory.put(type, inventory.get(type) - 1);
-            allocated.add(id);
-
-            System.out.println("Allocated " + id + " (" + type + ")");
-        }
-
-        // Cancel (Rollback)
-        public void cancel(String id, String type) {
-
-            if (!allocated.contains(id)) {
-                System.out.println("Invalid cancellation for " + id);
-                return;
-            }
-
-            // Push to stack
-            rollbackStack.push(id);
-
-            // Remove allocation
-            allocated.remove(id);
-
-            // Restore inventory
-            inventory.put(type, inventory.get(type) + 1);
-
-            System.out.println("Cancelled " + id + " -> rolled back");
-        }
-
-        public void showStatus() {
-            System.out.println("\nInventory: " + inventory);
-            System.out.println("Allocated: " + allocated);
-            System.out.println("Rollback Stack: " + rollbackStack);
+        public void display() {
+            System.out.println(name + " -> Capacity: " + capacity);
         }
     }
 
@@ -73,24 +32,32 @@ public class TrainConsistManagementApp {
     public static void main(String[] args) {
 
         System.out.println("=======================================");
-        System.out.println(" UC10 - Cancellation & Rollback ");
+        System.out.println(" UC8 - Stream Filtering ");
         System.out.println("=======================================\n");
 
-        TrainService ts = new TrainService();
+        // UC7 list reused
+        List<Bogie> bogies = new ArrayList<>();
 
-        // Allocate
-        ts.allocate("BG101", "Sleeper");
-        ts.allocate("BG102", "AC");
+        bogies.add(new Bogie("Sleeper", 72));
+        bogies.add(new Bogie("AC Chair", 54));
+        bogies.add(new Bogie("First Class", 40));
+        bogies.add(new Bogie("Cargo", 100));
 
-        // Cancel latest
-        ts.cancel("BG102", "AC");
+        System.out.println("All Bogies:");
+        for (Bogie b : bogies) {
+            b.display();
+        }
 
-        // Invalid cancel
-        ts.cancel("BG999", "Sleeper");
+        // 🔥 Stream + Filter
+        List<Bogie> filtered = bogies.stream()
+                .filter(b -> b.capacity > 60)
+                .collect(Collectors.toList());
 
-        // Show final state
-        ts.showStatus();
+        System.out.println("\nFiltered Bogies (Capacity > 60):");
+        for (Bogie b : filtered) {
+            b.display();
+        }
 
-        System.out.println("\nUC10 completed...");
+        System.out.println("\nUC8 completed...");
     }
 }
