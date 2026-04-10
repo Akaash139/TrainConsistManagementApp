@@ -6,25 +6,25 @@ import java.util.stream.*;
  * MAIN CLASS - BookMyTrain
  * ============================================================
  *
- * Use Case 8: Stream API Filtering
+ * Use Case 9: Group Bogies by Type
  *
- * @version 8.0
+ * @version 9.0
  */
 
 public class TrainConsistManagementAppTest {
 
     // ============ Bogie Class ============
     static class Bogie {
-        String name;
+        String type;
         int capacity;
 
-        public Bogie(String name, int capacity) {
-            this.name = name;
+        public Bogie(String type, int capacity) {
+            this.type = type;
             this.capacity = capacity;
         }
 
         public void display() {
-            System.out.println(name + " -> Capacity: " + capacity);
+            System.out.println(type + " -> " + capacity);
         }
     }
 
@@ -32,32 +32,33 @@ public class TrainConsistManagementAppTest {
     public static void main(String[] args) {
 
         System.out.println("=======================================");
-        System.out.println(" UC8 - Stream Filtering ");
+        System.out.println(" UC9 - Grouping Bogies ");
         System.out.println("=======================================\n");
 
-        // UC7 list reused
+        // Reuse list
         List<Bogie> bogies = new ArrayList<>();
 
         bogies.add(new Bogie("Sleeper", 72));
         bogies.add(new Bogie("AC Chair", 54));
+        bogies.add(new Bogie("Sleeper", 72));
         bogies.add(new Bogie("First Class", 40));
-        bogies.add(new Bogie("Cargo", 100));
+        bogies.add(new Bogie("AC Chair", 54));
 
-        System.out.println("All Bogies:");
-        for (Bogie b : bogies) {
-            b.display();
+        // 🔥 groupingBy
+        Map<String, List<Bogie>> grouped =
+                bogies.stream()
+                        .collect(Collectors.groupingBy(b -> b.type));
+
+        // Display grouped result
+        System.out.println("Grouped Bogies:");
+        for (String key : grouped.keySet()) {
+            System.out.println("\nType: " + key);
+
+            for (Bogie b : grouped.get(key)) {
+                b.display();
+            }
         }
 
-        // 🔥 Stream + Filter
-        List<Bogie> filtered = bogies.stream()
-                .filter(b -> b.capacity > 60)
-                .collect(Collectors.toList());
-
-        System.out.println("\nFiltered Bogies (Capacity > 60):");
-        for (Bogie b : filtered) {
-            b.display();
-        }
-
-        System.out.println("\nUC8 completed...");
+        System.out.println("\nUC9 completed...");
     }
 }
