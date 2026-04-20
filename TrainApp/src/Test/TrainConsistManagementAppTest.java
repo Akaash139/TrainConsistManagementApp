@@ -1,53 +1,51 @@
-import java.util.*;
 
-class Bogie {
-    String name;
-    int capacity;
+import java.util.Arrays;
 
-    Bogie(String name, int capacity) {
-        this.name = name;
-        this.capacity = capacity;
-    }
-}
+public class UC17Test {
 
-public class TrainConsistManagementAppTest {
-
-    static void bubbleSort(List<Bogie> bogies) {
-        int n = bogies.size();
-
-        for (int i = 0; i < n - 1; i++) {
-            for (int j = 0; j < n - i - 1; j++) {
-
-                if (bogies.get(j).capacity > bogies.get(j + 1).capacity) {
-                    Bogie temp = bogies.get(j);
-                    bogies.set(j, bogies.get(j + 1));
-                    bogies.set(j + 1, temp);
-                }
-            }
+    static void assertArray(String[] result, String[] expected, String testName) {
+        if (Arrays.equals(result, expected)) {
+            System.out.println(testName + " PASSED");
+        } else {
+            System.out.println(testName + " FAILED");
         }
-    }
-
-    static boolean isSorted(List<Bogie> bogies) {
-        for (int i = 0; i < bogies.size() - 1; i++) {
-            if (bogies.get(i).capacity > bogies.get(i + 1).capacity)
-                return false;
-        }
-        return true;
     }
 
     public static void main(String[] args) {
 
-        List<Bogie> test = Arrays.asList(
-                new Bogie("A", 72),
-                new Bogie("B", 56),
-                new Bogie("C", 24)
-        );
+        // Test 1: Basic Sorting
+        String[] t1 = {"Sleeper","AC Chair","First Class","General","Luxury"};
+        Arrays.sort(t1);
+        assertArray(t1,
+                new String[]{"AC Chair","First Class","General","Luxury","Sleeper"},
+                "testSort_BasicAlphabeticalSorting");
 
-        bubbleSort(test);
+        // Test 2: Unsorted Input
+        String[] t2 = {"Luxury","General","Sleeper","AC Chair"};
+        Arrays.sort(t2);
+        assertArray(t2,
+                new String[]{"AC Chair","General","Luxury","Sleeper"},
+                "testSort_UnsortedInput");
 
-        if (isSorted(test))
-            System.out.println("testSort_Bogies PASSED");
-        else
-            System.out.println("testSort_Bogies FAILED");
+        // Test 3: Already Sorted
+        String[] t3 = {"AC Chair","First Class","General"};
+        Arrays.sort(t3);
+        assertArray(t3,
+                new String[]{"AC Chair","First Class","General"},
+                "testSort_AlreadySortedArray");
+
+        // Test 4: Duplicates
+        String[] t4 = {"Sleeper","AC Chair","Sleeper","General"};
+        Arrays.sort(t4);
+        assertArray(t4,
+                new String[]{"AC Chair","General","Sleeper","Sleeper"},
+                "testSort_Duplicates");
+
+        // Test 5: Single Element
+        String[] t5 = {"Sleeper"};
+        Arrays.sort(t5);
+        assertArray(t5,
+                new String[]{"Sleeper"},
+                "testSort_SingleElement");
     }
 }
