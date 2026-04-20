@@ -1,81 +1,61 @@
 import java.util.*;
 
-/**
- * ============================================================
- * UC15: Safe Cargo Assignment using try-catch-finally
- * ============================================================
- */
+class Bogie {
+    String name;
+    int capacity;
+
+    Bogie(String name, int capacity) {
+        this.name = name;
+        this.capacity = capacity;
+    }
+
+    void display() {
+        System.out.println(name + " -> Capacity: " + capacity);
+    }
+}
 
 public class TrainConsistManagementApp {
 
-    // 🔴 Custom Runtime Exception
-    static class CargoSafetyException extends RuntimeException {
-        public CargoSafetyException(String message) {
-            super(message);
-        }
-    }
+    // Bubble Sort based on capacity
+    public static void bubbleSort(List<Bogie> bogies) {
+        int n = bogies.size();
 
-    // 🚆 Goods Bogie Class
-    static class GoodsBogie {
-        String shape;   // Cylindrical / Rectangular
-        String cargo;
+        for (int i = 0; i < n - 1; i++) {
+            boolean swapped = false;
 
-        public GoodsBogie(String shape) {
-            this.shape = shape;
-        }
+            for (int j = 0; j < n - i - 1; j++) {
 
-        // 🚨 Assign Cargo with Safety Check
-        public void assignCargo(String cargo) {
-            try {
-                // Rule: Rectangular cannot carry Petroleum
-                if (shape.equalsIgnoreCase("Rectangular") &&
-                        cargo.equalsIgnoreCase("Petroleum")) {
+                if (bogies.get(j).capacity > bogies.get(j + 1).capacity) {
 
-                    throw new CargoSafetyException(
-                            "Unsafe: Rectangular bogie cannot carry Petroleum");
+                    // swap objects
+                    Bogie temp = bogies.get(j);
+                    bogies.set(j, bogies.get(j + 1));
+                    bogies.set(j + 1, temp);
+
+                    swapped = true;
                 }
-
-                // Safe assignment
-                this.cargo = cargo;
-                System.out.println("Cargo assigned successfully: " + cargo);
-
-            } catch (CargoSafetyException e) {
-                System.out.println("Error: " + e.getMessage());
-
-            } finally {
-                System.out.println("Validation completed for " + shape + " bogie\n");
             }
-        }
 
-        public void display() {
-            System.out.println(shape + " Bogie -> Cargo: " + cargo);
+            if (!swapped) break;
         }
     }
 
     public static void main(String[] args) {
 
-        System.out.println("=======================================");
-        System.out.println(" UC15 - Safe Cargo Assignment ");
-        System.out.println("=======================================\n");
+        List<Bogie> bogies = new ArrayList<>();
 
-        // ✅ Safe case
-        GoodsBogie b1 = new GoodsBogie("Cylindrical");
-        b1.assignCargo("Petroleum");
+        bogies.add(new Bogie("Sleeper", 72));
+        bogies.add(new Bogie("AC Chair", 56));
+        bogies.add(new Bogie("General", 24));
+        bogies.add(new Bogie("First Class", 70));
+        bogies.add(new Bogie("Second Sitting", 60));
 
-        // ❌ Unsafe case
-        GoodsBogie b2 = new GoodsBogie("Rectangular");
-        b2.assignCargo("Petroleum");
+        System.out.println("Before Sorting:");
+        for (Bogie b : bogies) b.display();
 
-        // ✅ Another safe case (program continues)
-        GoodsBogie b3 = new GoodsBogie("Rectangular");
-        b3.assignCargo("Coal");
+        bubbleSort(bogies);
 
-        // Display
-        System.out.println("Final Bogie States:");
-        b1.display();
-        b2.display(); // should be null cargo
-        b3.display();
-
-        System.out.println("\nUC15 completed...");
+        System.out.println("\nAfter Sorting (By Capacity):");
+        for (Bogie b : bogies) b.display();
     }
 }

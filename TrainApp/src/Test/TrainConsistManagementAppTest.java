@@ -1,60 +1,53 @@
 import java.util.*;
 
+class Bogie {
+    String name;
+    int capacity;
+
+    Bogie(String name, int capacity) {
+        this.name = name;
+        this.capacity = capacity;
+    }
+}
+
 public class TrainConsistManagementAppTest {
 
-    static class CargoSafetyException extends RuntimeException {
-        public CargoSafetyException(String msg) {
-            super(msg);
-        }
-    }
+    static void bubbleSort(List<Bogie> bogies) {
+        int n = bogies.size();
 
-    static class GoodsBogie {
-        String shape;
-        String cargo;
+        for (int i = 0; i < n - 1; i++) {
+            for (int j = 0; j < n - i - 1; j++) {
 
-        public GoodsBogie(String shape) {
-            this.shape = shape;
-        }
-
-        public void assignCargo(String cargo) {
-            try {
-                if (shape.equalsIgnoreCase("Rectangular") &&
-                        cargo.equalsIgnoreCase("Petroleum")) {
-
-                    throw new CargoSafetyException("Unsafe assignment");
+                if (bogies.get(j).capacity > bogies.get(j + 1).capacity) {
+                    Bogie temp = bogies.get(j);
+                    bogies.set(j, bogies.get(j + 1));
+                    bogies.set(j + 1, temp);
                 }
-                this.cargo = cargo;
-
-            } catch (CargoSafetyException e) {
-                // handled
-
-            } finally {
-                System.out.println("Finally executed");
             }
         }
     }
 
+    static boolean isSorted(List<Bogie> bogies) {
+        for (int i = 0; i < bogies.size() - 1; i++) {
+            if (bogies.get(i).capacity > bogies.get(i + 1).capacity)
+                return false;
+        }
+        return true;
+    }
+
     public static void main(String[] args) {
 
-        // ✅ Test 1: Safe assignment
-        GoodsBogie b1 = new GoodsBogie("Cylindrical");
-        b1.assignCargo("Petroleum");
-        System.out.println("Safe Assignment: " + ("Petroleum".equals(b1.cargo)));
+        List<Bogie> test = Arrays.asList(
+                new Bogie("A", 72),
+                new Bogie("B", 56),
+                new Bogie("C", 24)
+        );
 
-        // ✅ Test 2: Unsafe handled
-        GoodsBogie b2 = new GoodsBogie("Rectangular");
-        b2.assignCargo("Petroleum");
-        System.out.println("Unsafe Handled: " + (b2.cargo == null));
+        bubbleSort(test);
 
-        // ✅ Test 3: Cargo not assigned after failure
-        System.out.println("No Assignment After Fail: " + (b2.cargo == null));
-
-        // ✅ Test 4: Program continues
-        GoodsBogie b3 = new GoodsBogie("Rectangular");
-        b3.assignCargo("Coal");
-        System.out.println("Program Continues: " + ("Coal".equals(b3.cargo)));
-
-        // ✅ Test 5: Finally block (visual check)
-        System.out.println("Check above -> 'Finally executed' printed every time");
+        if (isSorted(test))
+            System.out.println("testSort_Bogies PASSED");
+        else
+            System.out.println("testSort_Bogies FAILED");
     }
 }
