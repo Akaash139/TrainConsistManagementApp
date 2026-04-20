@@ -1,10 +1,16 @@
+public class UC18Test {
 
-import java.util.Arrays;
+    public static boolean linearSearch(String[] bogies, String key) {
+        for (String b : bogies) {
+            if (b.equals(key)) {
+                return true;
+            }
+        }
+        return false;
+    }
 
-public class UC17Test {
-
-    static void assertArray(String[] result, String[] expected, String testName) {
-        if (Arrays.equals(result, expected)) {
+    static void assertResult(boolean result, boolean expected, String testName) {
+        if (result == expected) {
             System.out.println(testName + " PASSED");
         } else {
             System.out.println(testName + " FAILED");
@@ -13,39 +19,27 @@ public class UC17Test {
 
     public static void main(String[] args) {
 
-        // Test 1: Basic Sorting
-        String[] t1 = {"Sleeper","AC Chair","First Class","General","Luxury"};
-        Arrays.sort(t1);
-        assertArray(t1,
-                new String[]{"AC Chair","First Class","General","Luxury","Sleeper"},
-                "testSort_BasicAlphabeticalSorting");
+        String[] data = {"BG101","BG205","BG309","BG412","BG550"};
 
-        // Test 2: Unsorted Input
-        String[] t2 = {"Luxury","General","Sleeper","AC Chair"};
-        Arrays.sort(t2);
-        assertArray(t2,
-                new String[]{"AC Chair","General","Luxury","Sleeper"},
-                "testSort_UnsortedInput");
+        // Test 1: Found
+        assertResult(linearSearch(data, "BG309"), true,
+                "testSearch_BogieFound");
 
-        // Test 3: Already Sorted
-        String[] t3 = {"AC Chair","First Class","General"};
-        Arrays.sort(t3);
-        assertArray(t3,
-                new String[]{"AC Chair","First Class","General"},
-                "testSort_AlreadySortedArray");
+        // Test 2: Not Found
+        assertResult(linearSearch(data, "BG999"), false,
+                "testSearch_BogieNotFound");
 
-        // Test 4: Duplicates
-        String[] t4 = {"Sleeper","AC Chair","Sleeper","General"};
-        Arrays.sort(t4);
-        assertArray(t4,
-                new String[]{"AC Chair","General","Sleeper","Sleeper"},
-                "testSort_Duplicates");
+        // Test 3: First Element
+        assertResult(linearSearch(data, "BG101"), true,
+                "testSearch_FirstElementMatch");
+
+        // Test 4: Last Element
+        assertResult(linearSearch(data, "BG550"), true,
+                "testSearch_LastElementMatch");
 
         // Test 5: Single Element
-        String[] t5 = {"Sleeper"};
-        Arrays.sort(t5);
-        assertArray(t5,
-                new String[]{"Sleeper"},
-                "testSort_SingleElement");
+        String[] single = {"BG101"};
+        assertResult(linearSearch(single, "BG101"), true,
+                "testSearch_SingleElementArray");
     }
 }
