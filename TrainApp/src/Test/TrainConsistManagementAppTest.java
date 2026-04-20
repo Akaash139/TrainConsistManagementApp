@@ -1,11 +1,21 @@
-public class UC18Test {
+import java.util.Arrays;
 
-    public static boolean linearSearch(String[] bogies, String key) {
-        for (String b : bogies) {
-            if (b.equals(key)) {
-                return true;
-            }
+public class UC19Test {
+
+    public static boolean binarySearch(String[] arr, String key) {
+
+        int low = 0, high = arr.length - 1;
+
+        while (low <= high) {
+            int mid = (low + high) / 2;
+
+            int cmp = key.compareTo(arr[mid]);
+
+            if (cmp == 0) return true;
+            else if (cmp < 0) high = mid - 1;
+            else low = mid + 1;
         }
+
         return false;
     }
 
@@ -22,24 +32,35 @@ public class UC18Test {
         String[] data = {"BG101","BG205","BG309","BG412","BG550"};
 
         // Test 1: Found
-        assertResult(linearSearch(data, "BG309"), true,
-                "testSearch_BogieFound");
+        assertResult(binarySearch(data, "BG309"), true,
+                "testBinarySearch_BogieFound");
 
         // Test 2: Not Found
-        assertResult(linearSearch(data, "BG999"), false,
-                "testSearch_BogieNotFound");
+        assertResult(binarySearch(data, "BG999"), false,
+                "testBinarySearch_BogieNotFound");
 
         // Test 3: First Element
-        assertResult(linearSearch(data, "BG101"), true,
-                "testSearch_FirstElementMatch");
+        assertResult(binarySearch(data, "BG101"), true,
+                "testBinarySearch_FirstElementMatch");
 
         // Test 4: Last Element
-        assertResult(linearSearch(data, "BG550"), true,
-                "testSearch_LastElementMatch");
+        assertResult(binarySearch(data, "BG550"), true,
+                "testBinarySearch_LastElementMatch");
 
         // Test 5: Single Element
         String[] single = {"BG101"};
-        assertResult(linearSearch(single, "BG101"), true,
-                "testSearch_SingleElementArray");
+        assertResult(binarySearch(single, "BG101"), true,
+                "testBinarySearch_SingleElementArray");
+
+        // Test 6: Empty Array
+        String[] empty = {};
+        assertResult(binarySearch(empty, "BG101"), false,
+                "testBinarySearch_EmptyArray");
+
+        // Test 7: Unsorted Input (Handled)
+        String[] unsorted = {"BG309","BG101","BG550","BG205","BG412"};
+        Arrays.sort(unsorted);
+        assertResult(binarySearch(unsorted, "BG205"), true,
+                "testBinarySearch_UnsortedInputHandled");
     }
 }
