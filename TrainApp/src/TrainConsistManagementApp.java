@@ -1,25 +1,29 @@
-import java.util.Arrays;
-
 public class BookMyTrain {
+
+    // Linear Search Method
+    public static boolean linearSearch(String[] bogies, String key) {
+        for (int i = 0; i < bogies.length; i++) {
+            if (bogies[i].equals(key)) {
+                return true; // Found
+            }
+        }
+        return false; // Not found
+    }
 
     public static void main(String[] args) {
 
-        // Bogie type names
-        String[] bogies = {
-                "Sleeper",
-                "AC Chair",
-                "First Class",
-                "General",
-                "Luxury"
+        String[] bogieIds = {
+                "BG101", "BG205", "BG309", "BG412", "BG550"
         };
 
-        System.out.println("Before Sorting:");
-        System.out.println(Arrays.toString(bogies));
+        String searchKey = "BG309";
 
-        // Built-in sorting
-        Arrays.sort(bogies);
+        boolean found = linearSearch(bogieIds, searchKey);
 
-        System.out.println("\nAfter Sorting (Alphabetical):");
-        System.out.println(Arrays.toString(bogies));
+        if (found) {
+            System.out.println("Bogie " + searchKey + " FOUND in train.");
+        } else {
+            System.out.println("Bogie " + searchKey + " NOT FOUND.");
+        }
     }
 }
